@@ -54,7 +54,11 @@ export const ModelName = {
   User: 'User',
   Account: 'Account',
   Session: 'Session',
-  Post: 'Post'
+  Repository: 'Repository',
+  PullRequest: 'PullRequest',
+  Commit: 'Commit',
+  Review: 'Review',
+  ReviewComment: 'ReviewComment'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -117,17 +121,69 @@ export const SessionScalarFieldEnum = {
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
 
 
-export const PostScalarFieldEnum = {
+export const RepositoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RepositoryScalarFieldEnum = (typeof RepositoryScalarFieldEnum)[keyof typeof RepositoryScalarFieldEnum]
+
+
+export const PullRequestScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  content: 'content',
-  published: 'published',
+  description: 'description',
+  status: 'status',
+  repositoryId: 'repositoryId',
   authorId: 'authorId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type PostScalarFieldEnum = (typeof PostScalarFieldEnum)[keyof typeof PostScalarFieldEnum]
+export type PullRequestScalarFieldEnum = (typeof PullRequestScalarFieldEnum)[keyof typeof PullRequestScalarFieldEnum]
+
+
+export const CommitScalarFieldEnum = {
+  id: 'id',
+  commitHash: 'commitHash',
+  message: 'message',
+  repositoryId: 'repositoryId',
+  authorId: 'authorId',
+  createdAt: 'createdAt'
+} as const
+
+export type CommitScalarFieldEnum = (typeof CommitScalarFieldEnum)[keyof typeof CommitScalarFieldEnum]
+
+
+export const ReviewScalarFieldEnum = {
+  id: 'id',
+  pullRequestId: 'pullRequestId',
+  reviewerId: 'reviewerId',
+  summary: 'summary',
+  rating: 'rating',
+  decision: 'decision',
+  aiGenerated: 'aiGenerated',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const ReviewCommentScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  commitId: 'commitId',
+  content: 'content',
+  filePath: 'filePath',
+  line: 'line',
+  createdAt: 'createdAt'
+} as const
+
+export type ReviewCommentScalarFieldEnum = (typeof ReviewCommentScalarFieldEnum)[keyof typeof ReviewCommentScalarFieldEnum]
 
 
 export const SortOrder = {

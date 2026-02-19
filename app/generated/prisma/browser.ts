@@ -33,7 +33,27 @@ export type Account = Prisma.AccountModel
  */
 export type Session = Prisma.SessionModel
 /**
- * Model Post
+ * Model Repository
  * 
  */
-export type Post = Prisma.PostModel
+export type Repository = Prisma.RepositoryModel
+/**
+ * Model PullRequest
+ * 
+ */
+export type PullRequest = Prisma.PullRequestModel
+/**
+ * Model Commit
+ * 
+ */
+export type Commit = Prisma.CommitModel
+/**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
+ * Model ReviewComment
+ * 
+ */
+export type ReviewComment = Prisma.ReviewCommentModel

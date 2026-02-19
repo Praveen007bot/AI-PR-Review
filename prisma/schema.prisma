@@ -13,15 +13,40 @@ datasource db {
   provider = "postgresql"
 }
 
+// ==========================
+// ENUMS
+// ==========================
+
+enum PRStatus {
+  OPEN
+  CLOSED
+  MERGED
+}
+
+enum ReviewDecision {
+  APPROVED
+  CHANGES_REQUESTED
+  COMMENTED
+}
+
+// ==========================
+// AUTH MODELS (Auth.js)
+// ==========================
+
 model User {
   id            Int       @id @default(autoincrement())
   name          String?
   email         String    @unique
   emailVerified DateTime?
   image         String?
-  posts         Post[]
-  accounts      Account[]
-  sessions      Session[]
+
+  accounts Account[]
+  sessions Session[]
+
+  repositories Repository[]
+  pullRequests PullRequest[]
+  commits      Commit[]
+  reviews      Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -39,7 +64,8 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -52,20 +78,108 @@ model Session {
   sessionToken String   @unique
   userId       Int
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  authorId  Int
-  author    User    @relation(fields: [authorId], references: [id])
+// ==========================
+// CORE DOMAIN MODELS
+// ==========================
+
+model Repository {
+  id      Int    @id @default(autoincrement())
+  name    String
+  ownerId Int
+
+  owner        User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  pullRequests PullRequest[]
+  commits      Commit[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
+}
+
+model PullRequest {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  status      PRStatus @default(OPEN)
+
+  repositoryId Int
+  authorId     Int
+
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  author     User       @relation(fields: [authorId], references: [id])
+
+  commits Commit[] @relation("PRCommits")
+  reviews Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([repositoryId])
+  @@index([authorId])
+}
+
+model Commit {
+  id         Int    @id @default(autoincrement())
+  commitHash String @unique
+  message    String
+
+  repositoryId Int
+  authorId     Int
+
+  repository Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  author     User       @relation(fields: [authorId], references: [id])
+
+  pullRequests PullRequest[]   @relation("PRCommits")
+  comments     ReviewComment[]
+
+  createdAt DateTime @default(now())
+
+  @@index([repositoryId])
+  @@index([authorId])
+}
+
+model Review {
+  id            Int @id @default(autoincrement())
+  pullRequestId Int
+  reviewerId    Int
+
+  summary     String?
+  rating      Int?
+  decision    ReviewDecision
+  aiGenerated Boolean        @default(false)
+
+  pullRequest PullRequest     @relation(fields: [pullRequestId], references: [id], onDelete: Cascade)
+  reviewer    User            @relation(fields: [reviewerId], references: [id])
+  comments    ReviewComment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pullRequestId])
+  @@index([reviewerId])
+}
+
+model ReviewComment {
+  id       Int     @id @default(autoincrement())
+  reviewId Int
+  commitId Int?
+  content  String
+  filePath String?
+  line     Int?
+
+  review Review  @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  commit Commit? @relation(fields: [commitId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([reviewId])
+  @@index([commitId])
 }

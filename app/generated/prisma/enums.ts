@@ -9,7 +9,19 @@
 * 🟢 You can import this file directly.
 */
 
+export const PRStatus = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  MERGED: 'MERGED'
+} as const
+
+export type PRStatus = (typeof PRStatus)[keyof typeof PRStatus]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const ReviewDecision = {
+  APPROVED: 'APPROVED',
+  CHANGES_REQUESTED: 'CHANGES_REQUESTED',
+  COMMENTED: 'COMMENTED'
+} as const
+
+export type ReviewDecision = (typeof ReviewDecision)[keyof typeof ReviewDecision]
